@@ -1,0 +1,66 @@
+# Build directories
+build/
+cmake-build-*/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Compiled files
+*.o
+*.obj
+*.elf
+*.bin
+*.hex
+*.uf2
+*.map
+*.dis
+*.a
+*.lib
+
+# Pi Pico SDK generated
+generated/
+
+# IDE - VS Code
+.vscode/
+!.vscode/extensions.json
+
+# IDE - CLion
+.idea/
+*.iml
+
+# KiCad backup files
+*-bak
+*.bak
+*-backups/
+_autosave-*
+
+# KiCad lock files
+*.lck
+
+# KiCad generated files
+*-cache.lib
+*.kicad_prl
+fp-info-cache
+*.kicad_pcb-bak
+*.sch-bak
+
+# KiCad output directories (optional - some prefer to track these)
+gerbers/
+fabrication/
+*-gerbers*.zip
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Thumbnails
+Thumbs.db
+ehthumbs.db
