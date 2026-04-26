@@ -1,66 +1,95 @@
-# Build directories
+# Build artifacts
 build/
-cmake-build-*/
+build_*/
+.claude/
 
-# CMake
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-Makefile
-compile_commands.json
-
-# Compiled files
-*.o
-*.obj
-*.elf
-*.bin
-*.hex
-*.uf2
-*.map
-*.dis
-*.a
-*.lib
-
-# Pi Pico SDK generated
-generated/
-
-# IDE - VS Code
-.vscode/
-!.vscode/extensions.json
-
-# IDE - CLion
-.idea/
-*.iml
-
-# KiCad backup files
-*-bak
-*.bak
-*-backups/
-_autosave-*
-
-# KiCad lock files
-*.lck
-
-# KiCad generated files
-*-cache.lib
-*.kicad_prl
-fp-info-cache
-*.kicad_pcb-bak
-*.sch-bak
-
-# KiCad output directories (optional - some prefer to track these)
-gerbers/
-fabrication/
-*-gerbers*.zip
+# Temporary capture files
+*.pbm
+*.png
+data.txt
+screenlog.*
+tmp/
 
 # macOS
 .DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
 
-# Thumbnails
-Thumbs.db
-ehthumbs.db
+# Editor
+.vscode/
+*.swp
+*.swo
+*~
+*.wav
+*.png
+*.flac
+*.bin
+
+.obsidian
+.cache/
+
+# =============================================================================
+# KiCad
+# =============================================================================
+
+# Backup files
+*-backups/
+*.bak
+*.bck
+*-bak
+*-save.kicad_pcb
+*-save.kicad_sch
+*.kicad_pcb-bak
+*.kicad_sch-bak
+\#auto_saved_files\#
+_autosave-*
+gerbers/
+
+# Cache and temporary files
+*-cache.lib
+*.cache
+fp-info-cache
+sym-lib-table.backup
+
+# Lock files
+*.lck
+*.lock
+~*.lck
+
+# Project local settings (user-specific)
+*.kicad_prl
+
+# Auto-saved files
+*.000
+*.bak
+
+# Gerber job files (generated)
+*-job.gbrjob
+hardware/neopico-hd/**gerbers**
+
+# Drill files backup
+*.drl.bak
+
+# Reports (optional - uncomment if you don't want these in git)
+# *.rpt
+# *.csv
+# *.txt
+
+# 3D models cache
+*.wrl.cache
+*.step.cache
+
+# Fabrication outputs (optional - uncomment if generated locally)
+# gerbers/
+# fabrication/
+# *-gerbers/
+# Prevent large media files in reference/
+reference/*.wav
+reference/*.flac
+reference/*.mp3
+venv/
+
+# hstx_lab dependencies
+src/misc/hstx_lab/lib/
+.gemini/
+gha-creds-*.json
+**/gemini-*.yml
+**/gemini-*.toml
