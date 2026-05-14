@@ -81,6 +81,10 @@ hardware/neopico-hd/**gerbers**
 # gerbers/
 # fabrication/
 # *-gerbers/
+
+# kicad-jlcpcb-tools plugin local state and outputs
+jlcpcb/
+
 # Prevent large media files in reference/
 reference/*.wav
 reference/*.flac
