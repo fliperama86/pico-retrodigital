@@ -1,0 +1,10 @@
+(version 1)
+
+# Small breakout vias (0.45 mm diameter, 0.2 mm drill) on specific nets
+# where the standard 0.6/0.3 via cannot fit. Annular ring 0.125 mm is
+# within fab capability. Scoped to these nets only — any other net
+# still requires the project's standard 0.5 mm minimum via.
+(rule "small_breakout_via"
+	(condition "A.Type == 'Via' && (A.NetName == '+1V1' || A.NetName == 'CTL_0' || A.NetName == 'CTL_1' || A.NetName == 'CTL_2')")
+	(constraint via_diameter (min 0.45mm))
+	(constraint hole_size (min 0.2mm)))

@@ -85,6 +85,9 @@ hardware/neopico-hd/**gerbers**
 # kicad-jlcpcb-tools plugin local state and outputs
 jlcpcb/
 
+# KiCad DRC output
+*_drc_violations.json
+
 # Prevent large media files in reference/
 reference/*.wav
 reference/*.flac
