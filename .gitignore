@@ -100,3 +100,4 @@ src/misc/hstx_lab/lib/
 gha-creds-*.json
 **/gemini-*.yml
 **/gemini-*.toml
+production/
