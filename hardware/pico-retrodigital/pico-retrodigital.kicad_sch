@@ -4777,7 +4777,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "ProPrj_RP2-easyedapro:AOTA-B201610S3R3-101-T"
+		(symbol "pico-retrodigital:AOTA-B201610S3R3-101-T"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -4803,7 +4803,7 @@
 					)
 				)
 			)
-			(property "Footprint" "ProPrj_RP2-easyedapro:IND-SMD_L2.0-W1.6_AOTA-B201610S3R3-101-T"
+			(property "Footprint" "pico-retrodigital:IND-SMD_L2.0-W1.6_AOTA-B201610S3R3-101-T"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -4940,7 +4940,7 @@
 						(type none)
 					)
 				)
-				(pin unspecified line
+				(pin passive line
 					(at -5.08 0 0)
 					(length 1.016)
 					(name "1"
@@ -4958,7 +4958,7 @@
 						)
 					)
 				)
-				(pin unspecified line
+				(pin passive line
 					(at 5.08 0 180)
 					(length 1.016)
 					(name "2"
@@ -7531,7 +7531,7 @@
 						)
 					)
 				)
-				(pin unspecified line
+				(pin passive line
 					(at 25.4 60.96 180)
 					(length 2.54)
 					(name "VREG_AVDD"
@@ -8616,16 +8616,6 @@
 			(type default)
 		)
 		(uuid "3b92fa41-10ce-42fc-b912-0bff34050a6c")
-	)
-	(wire
-		(pts
-			(xy 353.06 121.92) (xy 354.33 121.92)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3cc8fa15-b28e-4bde-9b18-19914fd1fdca")
 	)
 	(wire
 		(pts
@@ -18808,7 +18798,7 @@
 		)
 	)
 	(symbol
-		(lib_id "ProPrj_RP2-easyedapro:AOTA-B201610S3R3-101-T")
+		(lib_id "pico-retrodigital:AOTA-B201610S3R3-101-T")
 		(at 271.78 114.3 270)
 		(unit 1)
 		(body_style 1)
@@ -23962,82 +23952,6 @@
 			(project "pico-retrodigital"
 				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
 					(reference "D4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 354.33 121.92 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "fa55ef7d-8a69-41df-99c3-fbdf7083ec20")
-		(property "Reference" "#PWR031"
-			(at 354.33 128.27 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 358.14 123.19 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 354.33 121.92 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 354.33 121.92 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 354.33 121.92 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "1b8b049a-2a8f-4c08-a670-025153c41be9")
-		)
-		(instances
-			(project "pico-retrodigital"
-				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
-					(reference "#PWR031")
 					(unit 1)
 				)
 			)
