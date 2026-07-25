@@ -1,0 +1,146 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run pre-commit checks
+        run: |
+          python -m pip install pre-commit==4.5.1
+          pre-commit run --all-files
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [mvs, snes]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
+
+      - name: Set up Pico SDK
+        run: |
+          git clone --depth 1 https://github.com/raspberrypi/pico-sdk.git "$HOME/pico-sdk"
+          git -C "$HOME/pico-sdk" submodule update --init
+
+      - name: Run MVS color tests
+        if: matrix.target == 'mvs'
+        run: bash tests/run_mvs_color_exhaustive.sh
+
+      - name: Build firmware
+        run: |
+          COLOR_MENU=OFF
+          if [ "${{ matrix.target }}" = "mvs" ]; then COLOR_MENU=ON; fi
+          cmake -S . -B build \
+            -DPICO_SDK_PATH="$HOME/pico-sdk" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DNEOPICO_CAPTURE_TARGET="${{ matrix.target }}" \
+            -DNEOPICO_MVS_COLOR_MODEL_MENU="$COLOR_MENU"
+          cmake --build build --parallel
+          python3 scripts/audit_firmware.py build/src/neopico_hd.elf
+          cp build/src/neopico_hd.uf2 "pico_retrodigital_${{ matrix.target }}.uf2"
+          cp build/src/neopico_hd.elf "pico_retrodigital_${{ matrix.target }}.elf"
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: pico-retrodigital-${{ matrix.target }}-build
+          path: |
+            pico_retrodigital_${{ matrix.target }}.uf2
+            pico_retrodigital_${{ matrix.target }}.elf
+
+  fabrication:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate fabrication files
+        uses: INTI-CMNB/KiBot@v2_k9
+        with:
+          config: hardware/kibot-jlcpcb.yml
+          board: hardware/pico-retrodigital/pico-retrodigital.kicad_pcb
+          schema: hardware/pico-retrodigital/pico-retrodigital.kicad_sch
+          dir: output
+
+      - name: Upload fabrication files
+        uses: actions/upload-artifact@v4
+        with:
+          name: pico-retrodigital-jlcpcb
+          path: |
+            output/gerbers.zip
+            output/bom.csv
+            output/pos.csv
+
+  release:
+    needs: [build, fabrication]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Download firmware
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pico-retrodigital-*-build
+          path: release-files
+          merge-multiple: true
+
+      - name: Download fabrication files
+        uses: actions/download-artifact@v4
+        with:
+          name: pico-retrodigital-jlcpcb
+          path: fabrication-files
+
+      - name: Package fabrication files
+        run: zip -j release-files/pico-retrodigital-jlcpcb.zip fabrication-files/*
+
+      - name: Generate changelog
+        run: |
+          PREVIOUS_TAG=$(git tag --sort=-v:refname | grep '^v' | grep -v "^${GITHUB_REF_NAME}$" | head -1 || true)
+          if [ -n "$PREVIOUS_TAG" ]; then
+            git log "${PREVIOUS_TAG}..HEAD" --pretty=format:'- %s (%h)' > /tmp/changelog.txt
+          else
+            git log --pretty=format:'- %s (%h)' > /tmp/changelog.txt
+          fi
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: /tmp/changelog.txt
+          files: release-files/*

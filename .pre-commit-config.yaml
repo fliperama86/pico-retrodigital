@@ -1,0 +1,31 @@
+exclude: ^hardware/(main-board-backup/|pico-retrodigital/)
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: clang-format
+        name: clang-format
+        entry: clang-format -i
+        language: python
+        additional_dependencies: [clang-format==22.1.1]
+        types: [c]
+        exclude: ^lib/pico_hdmi/
+
+  - repo: local
+    hooks:
+      - id: clang-tidy
+        name: clang-tidy
+        entry: bash -c 'if command -v clang-tidy >/dev/null; then clang-tidy "$@"; elif [ -f /opt/homebrew/opt/llvm/bin/clang-tidy ]; then /opt/homebrew/opt/llvm/bin/clang-tidy "$@"; else echo "clang-tidy not found. Please install llvm/clang-tidy."; exit 1; fi' --
+        language: system
+        types: [c]
+        args: ["-p=build", "--quiet"]
+        exclude: ^lib/pico_hdmi/
+        stages: [manual]

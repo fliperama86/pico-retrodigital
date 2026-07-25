@@ -1,0 +1,63 @@
+; MVS CSYNC Decoder
+;
+; Sync SM uses IN_BASE = GP27 (CSYNC). With GPIOBASE=16, pin index 11 = GP27.
+; C code sets pinctrl/execctrl so that pin 0 = CSYNC, pin 1 = PCLK (GP28).
+
+.program mvs_sync_4a
+
+public entry_point:
+    wait 1 pin 0               ; Wait for CSYNC High (IN_BASE = GP27)
+    mov x, !null                ; Initialize counter
+count_loop:
+    wait 0 pin 1                ; Wait for PCLK Low (pin 1 = GP28)
+    wait 1 pin 1                ; Wait for PCLK High (GP28)
+    jmp x-- check_pin           ; Decrement X
+check_pin:
+    jmp pin count_loop          ; If CSYNC still High, keep counting (JMP_PIN = GP27)
+
+    ; CSYNC went Low - push count and raise IRQ for event-driven vsync (Core 0)
+    mov isr, !x
+    push noblock
+    irq set 0
+    jmp entry_point
+
+
+; MVS Pixel Capture - 19-bit contiguous (GP27-45, DARK on bit 18)
+;
+; IN_BASE = GP27 (pin index 11 with GPIOBASE=16).
+; Captures 19 consecutive pins: GP27 (LSB) .. GP45 (MSB).
+;
+;   Bit 0:      GP27 (CSYNC)
+;   Bit 1:      GP28 (PCLK)
+;   Bits 2-6:   GP29-33 (Blue B4-B0)
+;   Bits 7-11:  GP34-38 (Green G4-G0)
+;   Bits 12-16: GP39-43 (Red R4-R0)
+;   Bit 17:     GP44 (SHADOW)
+;   Bit 18:     GP45 (DARK)
+;
+; Autopush at 19 bits = 1 pixel per FIFO word.
+
+.program mvs_pixel_capture_dark19
+
+    ; One-time initialization: C code will push (NEO_H_TOTAL - 1)
+    pull block
+    mov y, osr
+
+    ; Wait for trigger signal from C code (IRQ 4) at start of frame
+    wait 1 irq 4
+
+.wrap_target
+    ; 1. Sync to line start (CSYNC = pin 0 = GP27)
+    wait 0 pin 0                ; Wait for CSYNC LOW
+    wait 1 pin 0                ; Wait for CSYNC HIGH
+
+    ; 2. Sample NEO_H_TOTAL pixels
+    mov x, y                    ; Reset pixel counter
+pixel_loop_dark19:
+    wait 0 pin 1                ; Wait for PCLK LOW (pin 1 = GP28)
+    wait 1 pin 1                ; Wait for PCLK HIGH (rising edge = data valid)
+    nop                         ; Data setup: allow MVS outputs to settle
+    nop                         ; Extra cycle for hold margin (reduces wobble)
+    in pins, 19                 ; Sample GP27-45 (CSYNC, PCLK, B, G, R, SHADOW, DARK)
+    jmp x-- pixel_loop_dark19   ; Loop until line complete
+.wrap

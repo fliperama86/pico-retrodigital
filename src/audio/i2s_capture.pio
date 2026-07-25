@@ -1,0 +1,156 @@
+; =============================================================================
+; NEO-YSA2 right-justified capture with per-frame WS re-sync
+; =============================================================================
+; Same output format as i2s_capture: RIGHT word first, then LEFT word.
+;
+; Difference from the legacy program: every stereo frame begins by waiting for a
+; fresh WS high -> low transition. If BCK/WS glitches during flashcart game
+; launch, one frame can be lost, but capture cannot stay permanently bit/word
+; mis-framed.
+
+.program i2s_capture_frame_resync
+
+    ; Stall until BCK is toggling (bus alive)
+    wait 0 pin 2                ; BCK Low
+    wait 1 pin 2                ; BCK High
+
+.wrap_target
+    ; === Frame boundary: WS falling edge, right channel starts ===
+    wait 1 pin 1                ; WS High
+    wait 0 pin 1                ; WS Low
+
+    ; === RIGHT CHANNEL (WS LOW) ===
+    set x, 23                   ; Capture 24 bits
+frame_resync_right_loop:
+    wait 0 pin 2                ; BCK Low
+    wait 1 pin 2                ; BCK High (Rising Edge)
+    nop                         ; Hold margin before sampling DAT
+    in pins, 1                  ; Sample DAT
+    jmp x-- frame_resync_right_loop
+    push noblock                ; Push 24 bits
+
+    ; === LEFT CHANNEL (WS HIGH) ===
+    wait 1 pin 1                ; Wait for WS to go High
+    set x, 23                   ; Capture 24 bits
+frame_resync_left_loop:
+    wait 0 pin 2                ; BCK Low
+    wait 1 pin 2                ; BCK High (Rising Edge)
+    nop                         ; Hold margin before sampling DAT
+    in pins, 1                  ; Sample DAT
+    jmp x-- frame_resync_left_loop
+    push noblock                ; Push 24 bits
+.wrap
+
+; =============================================================================
+; PCM1802 ADC - Standard I2S format
+; =============================================================================
+; Used for AES and non-MV1C boards with external PCM1802 ADC.
+;
+; Format differences from NEO-YSA2 (right-justified):
+;   - Standard I2S: 1-bit delay after WS transition, then MSB first
+;   - WS LOW = Left channel, WS HIGH = Right channel
+;   - 24-bit data, 32 BCK per channel (64fs BCK)
+;   - PCM1802 master mode: generates BCK/LRCK from 12.288 MHz SCKI
+;
+; Output order: LEFT word first, then RIGHT word (opposite to i2s_capture)
+;
+; Pins: same as i2s_capture — OUT_BASE = DAT, so pin 0=DAT, 1=WS, 2=BCK
+
+.program i2s_capture_pcm1802
+
+    ; Sync: wait for BCK activity (bus alive)
+    wait 0 pin 2
+    wait 1 pin 2
+
+    ; Sync to WS falling edge (left channel boundary)
+    wait 1 pin 1
+    wait 0 pin 1
+
+.wrap_target
+    ; === LEFT CHANNEL (WS LOW) ===
+    ; Skip 1 BCK cycle (standard I2S 1-bit delay)
+    wait 0 pin 2
+    wait 1 pin 2
+
+    ; Capture 24 bits on BCK rising edge
+    set x, 23
+pcm1802_left_loop:
+    wait 0 pin 2
+    wait 1 pin 2
+    nop                             ; Hold margin before sampling
+    in pins, 1
+    jmp x-- pcm1802_left_loop
+    push noblock
+
+    ; === RIGHT CHANNEL (WS HIGH) ===
+    wait 1 pin 1                    ; Wait for WS transition
+    ; Skip 1 BCK cycle (standard I2S 1-bit delay)
+    wait 0 pin 2
+    wait 1 pin 2
+
+    ; Capture 24 bits
+    set x, 23
+pcm1802_right_loop:
+    wait 0 pin 2
+    wait 1 pin 2
+    nop
+    in pins, 1
+    jmp x-- pcm1802_right_loop
+    push noblock
+
+    wait 0 pin 1                    ; Wait for WS low (next frame)
+.wrap
+
+% c-sdk {
+#include "hardware/gpio.h"
+
+// Pin definitions: DAT, WS, BCK. OUT_BASE = DAT so wait pin 0=DAT, 1=WS, 2=BCK.
+
+static inline void i2s_capture_frame_resync_program_init(PIO pio, uint sm, uint offset, uint pin_dat, uint pin_ws, uint pin_bck) {
+    pio_sm_config c = i2s_capture_frame_resync_program_get_default_config(offset);
+
+    // Same pin mapping as i2s_capture: IN base = DAT, OUT base = DAT (for wait pin N)
+    sm_config_set_in_pins(&c, pin_dat);
+    sm_config_set_out_pins(&c, pin_dat, 3);
+
+    // Shift LEFT (MSB first), no autopush
+    sm_config_set_in_shift(&c, false, false, 32);
+
+    // Join FIFOs for 8-word RX depth
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+
+    pio_gpio_init(pio, pin_dat);
+    pio_gpio_init(pio, pin_bck);
+    pio_gpio_init(pio, pin_ws);
+
+    pio_sm_set_pindirs_with_mask64(pio, sm, 0,
+        (1ull << pin_dat) | (1ull << pin_bck) | (1ull << pin_ws));
+
+    sm_config_set_clkdiv(&c, 1.0f);
+    pio_sm_init(pio, sm, offset, &c);
+}
+
+static inline void i2s_capture_pcm1802_program_init(PIO pio, uint sm, uint offset, uint pin_dat, uint pin_ws, uint pin_bck) {
+    pio_sm_config c = i2s_capture_pcm1802_program_get_default_config(offset);
+
+    // Same pin mapping as i2s_capture: IN base = DAT, OUT base = DAT (for wait pin N)
+    sm_config_set_in_pins(&c, pin_dat);
+    sm_config_set_out_pins(&c, pin_dat, 3);
+
+    // Shift LEFT (MSB first), no autopush
+    sm_config_set_in_shift(&c, false, false, 32);
+
+    // Join FIFOs for 8-word RX depth
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+
+    pio_gpio_init(pio, pin_dat);
+    pio_gpio_init(pio, pin_bck);
+    pio_gpio_init(pio, pin_ws);
+
+    pio_sm_set_pindirs_with_mask64(pio, sm, 0,
+        (1ull << pin_dat) | (1ull << pin_bck) | (1ull << pin_ws));
+
+    sm_config_set_clkdiv(&c, 1.0f);
+    pio_sm_init(pio, sm, offset, &c);
+}
+%}

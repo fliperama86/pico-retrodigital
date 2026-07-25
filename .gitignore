@@ -1,6 +1,7 @@
 # Build artifacts
 build/
 build_*/
+build-*/
 .claude/
 
 # Temporary capture files
@@ -29,6 +30,8 @@ tmp/
 # =============================================================================
 # KiCad
 # =============================================================================
+
+.history/
 
 # Backup files
 *-backups/
@@ -63,7 +66,7 @@ sym-lib-table.backup
 
 # Gerber job files (generated)
 *-job.gbrjob
-hardware/neopico-hd/**gerbers**
+hardware/pico-retrodigital/**gerbers**
 
 # Drill files backup
 *.drl.bak
@@ -93,6 +96,8 @@ reference/*.wav
 reference/*.flac
 reference/*.mp3
 venv/
+__pycache__/
+*.py[cod]
 
 # hstx_lab dependencies
 src/misc/hstx_lab/lib/
