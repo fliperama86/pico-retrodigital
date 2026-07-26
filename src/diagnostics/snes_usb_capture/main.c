@@ -204,8 +204,7 @@ static void capture_reset(void)
     pio_sm_set_enabled(capture_pio, capture_sm, false);
     pio_sm_clear_fifos(capture_pio, capture_sm);
     pio_sm_restart(capture_pio, capture_sm);
-    pio_sm_exec(capture_pio, capture_sm,
-                pio_encode_jmp(capture_program_offset + snes_hard_sync_wrap_target));
+    pio_sm_exec(capture_pio, capture_sm, pio_encode_jmp(capture_program_offset + snes_hard_sync_wrap_target));
     pio_sm_set_enabled(capture_pio, capture_sm, true);
 }
 
