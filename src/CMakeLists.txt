@@ -57,6 +57,68 @@ if(NEOPICO_BUILD_PCM1802_USB_CAPTURE)
     pico_add_extra_outputs(neopico_pcm1802_usb_capture)
 endif()
 
+# =============================================================================
+# Standalone SNES to USB Frame Capture (no video, HSTX, HDMI, or audio)
+# =============================================================================
+option(PICO_RETRODIGITAL_BUILD_SNES_USB_CAPTURE
+    "Build standalone SNES RGB565 USB frame capture firmware" OFF)
+
+if(PICO_RETRODIGITAL_BUILD_SNES_USB_CAPTURE)
+    if(NOT NEOPICO_CAPTURE_TARGET_UPPER STREQUAL "SNES")
+        message(FATAL_ERROR
+            "PICO_RETRODIGITAL_BUILD_SNES_USB_CAPTURE requires NEOPICO_CAPTURE_TARGET=SNES")
+    endif()
+
+    add_executable(pico_retrodigital_snes_usb_capture
+        diagnostics/snes_usb_capture/main.c
+        diagnostics/snes_usb_capture/usb_descriptors.c
+    )
+
+    target_include_directories(pico_retrodigital_snes_usb_capture PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/diagnostics/snes_usb_capture
+    )
+
+    target_compile_options(pico_retrodigital_snes_usb_capture PRIVATE
+        -Wall
+        -Wextra
+        -Werror
+    )
+
+    pico_generate_pio_header(pico_retrodigital_snes_usb_capture
+        ${CMAKE_CURRENT_LIST_DIR}/video/video_capture_snes.pio
+    )
+
+    target_link_libraries(pico_retrodigital_snes_usb_capture
+        pico_stdlib
+        pico_stdio_usb
+        pico_unique_id
+        pico_usb_reset_interface
+        tinyusb_device
+        tinyusb_board
+        hardware_clocks
+        hardware_dma
+        hardware_gpio
+        hardware_pio
+    )
+
+    target_compile_definitions(pico_retrodigital_snes_usb_capture PRIVATE
+        PICO_STDIO_USB_ENABLE_RESET_VIA_BAUD_RATE=1
+        PICO_STDIO_USB_RESET_MAGIC_BAUD_RATE=1200
+        PICO_STDIO_USB_ENABLE_RESET_VIA_VENDOR_INTERFACE=1
+        PICO_STDIO_USB_RESET_BOOTSEL_INTERFACE_DISABLE_MASK=0
+        PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_RESET_TO_BOOTSEL=1
+        PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_RESET_TO_FLASH_BOOT=1
+        PICO_STDIO_USB_RESET_RESET_TO_FLASH_DELAY_MS=100
+        PICO_STDIO_USB_RESET_INTERFACE_SUPPORT_MS_OS_20_DESCRIPTOR=1
+        PICO_STDIO_USB_USE_DEFAULT_DESCRIPTORS=0
+    )
+
+    pico_enable_stdio_usb(pico_retrodigital_snes_usb_capture 0)
+    pico_enable_stdio_uart(pico_retrodigital_snes_usb_capture 0)
+    pico_add_extra_outputs(pico_retrodigital_snes_usb_capture)
+endif()
+
 add_executable(neopico_hd
     main.c
     experiments/menu_diag_experiment.c
@@ -139,6 +201,17 @@ set(NEOPICO_AUDIO_MODE "${_NEOPICO_AUDIO_MODE_DEFAULT}" CACHE STRING
 set_property(CACHE NEOPICO_AUDIO_MODE PROPERTY STRINGS DIGITAL PCM1802 SELECTABLE)
 option(NEOPICO_DIAG_AUDIO_OSD "Show HDMI audio underrun (silence splice) counter on the selftest OSD screen" OFF)
 set(NEOPICO_LINE_RING_SIZE "256" CACHE STRING "Number of 320px lines in the capture/display ring")
+option(PICO_RETRODIGITAL_SNES_USB_CAPTURE
+    "Accept USB CDC frame requests and return cropped SNES RGB565 frames" OFF)
+
+if(PICO_RETRODIGITAL_SNES_USB_CAPTURE)
+    if(NOT NEOPICO_CAPTURE_TARGET_UPPER STREQUAL "SNES")
+        message(FATAL_ERROR "PICO_RETRODIGITAL_SNES_USB_CAPTURE requires NEOPICO_CAPTURE_TARGET=SNES")
+    endif()
+    set(SNES_USB_CAPTURE_VALUE 1)
+else()
+    set(SNES_USB_CAPTURE_VALUE 0)
+endif()
 
 string(TOUPPER "${NEOPICO_MVS_EFFECT_MODEL}" NEOPICO_MVS_EFFECT_MODEL_UPPER)
 if(NEOPICO_MVS_EFFECT_MODEL_UPPER STREQUAL "MISTER")
@@ -546,6 +619,7 @@ target_compile_definitions(neopico_hd PRIVATE
     NEOPICO_AUDIO_MODE=${AUDIO_MODE_VALUE}
     NEOPICO_DIAG_AUDIO_OSD=${DIAG_AUDIO_OSD_VALUE}
     NEOPICO_LINE_RING_SIZE=${NEOPICO_LINE_RING_SIZE}
+    PICO_RETRODIGITAL_SNES_USB_CAPTURE=${SNES_USB_CAPTURE_VALUE}
 )
 
 pico_enable_stdio_usb(neopico_hd 1)

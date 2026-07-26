@@ -1,5 +1,5 @@
 /**
- * NeoPico-HD SNES / SuperPico Pin Configuration
+ * Pico RetroDigital SNES Pin Configuration
  *
  * Target-specific pins for SHVC/SNES digital video and audio capture.
  */
@@ -8,64 +8,64 @@
 #define SNES_PINS_H
 
 // =============================================================================
-// SNES Video Input Pins - GP27-44 CONTIGUOUS LAYOUT
+// SNES Video Input Pins - Pico RetroDigital PCB layout
 // =============================================================================
 // Captures RGB555 + VBLANK + HBLANK from the SNES PPU2.
 //
-// 18-pin capture window: GP27 (LSB) through GP44 (MSB).
+// The FPC J2 pin numbers are reversed at the main-board mating connector:
+// FPC pin 32 mates with main-board pin 1, through FPC pin 1 mating with
+// main-board pin 32.
 //
 // Pin mapping (LSB to MSB in captured word):
-//   Bit 0:      GP27 (VBLANK) - PPU2 Pin 26
-//   Bit 1:      GP28 (PCLK)   - PPU2 Pin 27
-//   Bits 2-6:   GP29-33 (Blue B4-B0, contiguous)
-//   Bits 7-11:  GP34-38 (Green G4-G0, contiguous)
-//   Bits 12-16: GP39-43 (Red R4-R0, contiguous)
-//   Bit 17:     GP44 (HBLANK) - PPU2 Pin 25
+//   Bits 0-4:   GP33-37 (Red R0-R4)
+//   Bits 5-9:   GP38-42 (Green G0-G4)
+//   Bits 10-14: GP43-47 (Blue B0-B4)
 //
-// With PIO GPIOBASE=16, pin index N = GP(N+16). So IN_BASE=11 -> GP27.
+// With PIO GPIOBASE=16, HBLANK/VBLANK/PCLK are GPIO indices 8/9/12.
 
-#define PIN_SNES_VBLANK 27
+#define PIN_SNES_HBLANK 24
+#define PIN_SNES_VBLANK 25
+#define PIN_SNES_PIXEL_VALID 26 // Not used until separately hardware-validated.
 #define PIN_SNES_PCLK 28
-#define PIN_SNES_BASE 27
+#define PIN_SNES_BASE 33
 
-#define PIN_SNES_B4 29
-#define PIN_SNES_B3 30
-#define PIN_SNES_B2 31
-#define PIN_SNES_B1 32
-#define PIN_SNES_B0 33
+#define PIN_SNES_R0 33
+#define PIN_SNES_R1 34
+#define PIN_SNES_R2 35
+#define PIN_SNES_R3 36
+#define PIN_SNES_R4 37
 
-#define PIN_SNES_G4 34
-#define PIN_SNES_G3 35
-#define PIN_SNES_G2 36
-#define PIN_SNES_G1 37
 #define PIN_SNES_G0 38
+#define PIN_SNES_G1 39
+#define PIN_SNES_G2 40
+#define PIN_SNES_G3 41
+#define PIN_SNES_G4 42
 
-#define PIN_SNES_R4 39
-#define PIN_SNES_R3 40
-#define PIN_SNES_R2 41
-#define PIN_SNES_R1 42
-#define PIN_SNES_R0 43
+#define PIN_SNES_B0 43
+#define PIN_SNES_B1 44
+#define PIN_SNES_B2 45
+#define PIN_SNES_B3 46
+#define PIN_SNES_B4 47
 
-#define PIN_SNES_HBLANK 44
-
-#define SNES_CAPTURE_PIN_LAST PIN_SNES_HBLANK
-#define SNES_CAPTURE_BITS 18
+#define SNES_CAPTURE_PIN_LAST PIN_SNES_B4
+#define SNES_CAPTURE_BITS 15
 
 // =============================================================================
-// SNES S-DSP Audio Input Pins (DAT=GP22, WS=GP23, BCK=GP24)
+// SNES S-DSP Audio Input Pins
 // =============================================================================
 // These match the existing NeoPico audio capture GPIOs, but the source is the
 // SNES S-DSP digital interface:
-//   DSP44 SDATA -> GPIO 22
-//   DSP43 LRCK  -> GPIO 23
-//   DSP42 BCLK  -> GPIO 24
+//   DSP44 SDATA -> GPIO 0
+//   DSP43 LRCK  -> GPIO 1
+//   DSP42 BCLK  -> GPIO 2
 
-#define PIN_I2S_DAT 22
-#define PIN_I2S_WS 23
-#define PIN_I2S_BCK 24
+#define PIN_I2S_DAT 0
+#define PIN_I2S_WS 1
+#define PIN_I2S_BCK 2
 
-// Existing OSD buttons on the carrier.
-#define PIN_OSD_BTN_MENU 25
-#define PIN_OSD_BTN_BACK 26
+// This PCB has no dedicated direct-input OSD buttons in the SNES capture pin
+// group. These aliases must not be enabled for SNES builds.
+#define PIN_OSD_BTN_MENU PIN_SNES_HBLANK
+#define PIN_OSD_BTN_BACK PIN_SNES_VBLANK
 
 #endif // SNES_PINS_H

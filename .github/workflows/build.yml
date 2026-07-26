@@ -30,6 +30,7 @@ jobs:
         run: |
           python -m pip install pre-commit==4.5.1
           pre-commit run --all-files
+          python -m compileall -q scripts tests
 
   build:
     runs-on: ubuntu-latest
@@ -57,12 +58,15 @@ jobs:
       - name: Build firmware
         run: |
           COLOR_MENU=OFF
+          SNES_USB_CAPTURE=OFF
           if [ "${{ matrix.target }}" = "mvs" ]; then COLOR_MENU=ON; fi
+          if [ "${{ matrix.target }}" = "snes" ]; then SNES_USB_CAPTURE=ON; fi
           cmake -S . -B build \
             -DPICO_SDK_PATH="$HOME/pico-sdk" \
             -DCMAKE_BUILD_TYPE=Release \
             -DNEOPICO_CAPTURE_TARGET="${{ matrix.target }}" \
-            -DNEOPICO_MVS_COLOR_MODEL_MENU="$COLOR_MENU"
+            -DNEOPICO_MVS_COLOR_MODEL_MENU="$COLOR_MENU" \
+            -DPICO_RETRODIGITAL_SNES_USB_CAPTURE="$SNES_USB_CAPTURE"
           cmake --build build --parallel
           python3 scripts/audit_firmware.py build/src/neopico_hd.elf
           cp build/src/neopico_hd.uf2 "pico_retrodigital_${{ matrix.target }}.uf2"

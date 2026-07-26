@@ -5,9 +5,12 @@ if (NOT PICO_SDK_PATH)
     set(PICO_SDK_PATH $ENV{PICO_SDK_PATH})
 endif()
 
+# Make the product-specific board definition visible before importing the SDK.
+list(APPEND PICO_BOARD_HEADER_DIRS "${CMAKE_CURRENT_LIST_DIR}/boards")
+
 # Set board type before SDK import (override with -DPICO_BOARD=pico for Pico 1)
 if(NOT DEFINED PICO_BOARD)
-    set(PICO_BOARD weact_studio_rp2350b_core)
+    set(PICO_BOARD pico_retrodigital)
 endif()
 
 # For SDK 2.x, ensure the platform is set before project() to help toolchain selection

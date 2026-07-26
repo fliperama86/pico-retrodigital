@@ -1,42 +1,54 @@
 ; SNES Hard Sync Capture (with horizontal offset)
 ; Optimized for RP2350.
 ;
-; IN_BASE = GP27 (VBLANK, pin index 11 with GPIOBASE=16).
-; C code sets pinctrl so that:
-;   pin 0  = GP27 (VBLANK)
-;   pin 1  = GP28 (PCLK)
-;   pin 17 = GP44 (HBLANK)
+; GPIOBASE = 16, IN_BASE = GP33, RGB capture is GP33-GP47.
+; WAIT GPIO operands use absolute GPIO numbers. The Pico SDK relocates them
+; for GPIOBASE=16 when loading the program.
+;   gpio 24 = HBLANK
+;   gpio 25 = VBLANK
+;   gpio 28 = PCLK
+;
+; Frame-level synchronization (the VBLANK wait) runs entirely on this state
+; machine, so the capture start line is cycle-exact and independent of
+; CPU/USB timing: the CPU may arm the trigger (irq 4) at any point in the
+; frame, once DMA is configured, and everything from there to the first
+; captured pixel is timed by the PIO clock.
 
 .program snes_hard_sync
 
-    ; One-time init: C code pushes (CAPTURE_ACTIVE_WIDTH - 1)
+    ; One-time init: C code pushes (CAPTURE_WIDTH - 1)
     pull block
     mov y, osr
 
 .wrap_target
-    ; Wait for C code trigger at top of frame.
+    ; Wait for C code trigger at top of frame (DMA is already configured).
     wait 1 irq 4
+
+    ; VBLANK falling edge marks frame start. The first HBLANK falling edge
+    ; at or after this point starts line 0.
+    wait 1 gpio 25
+    wait 0 gpio 25
 
 line_loop:
     ; Wait for active line start (HBLANK falling edge).
-    wait 1 pin 17
-    wait 0 pin 17
+    wait 1 gpio 24
+    wait 0 gpio 24
 
     ; Back porch + PPU pipeline delay. This is the known-good SuperPico value.
     set x, 19
 skip_loop:
-    wait 0 pin 1
-    wait 1 pin 1
+    wait 0 gpio 28
+    wait 1 gpio 28
     jmp x-- skip_loop
 
     ; Capture 256 active pixels.
     mov x, y
 pixel_loop:
-    wait 0 pin 1
-    wait 1 pin 1
+    wait 0 gpio 28
+    wait 1 gpio 28
     nop
     nop
-    in pins, 18
+    in pins, 15
     jmp x-- pixel_loop
 
     jmp line_loop
