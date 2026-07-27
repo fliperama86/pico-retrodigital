@@ -26,6 +26,9 @@ class VideoFrame:
     height: int
     rgb888: bytes
     received_at: float
+    brightness: int | None
+    gated: bool | None
+    mask: bytes | None
 
 
 def load_pygame_module():
@@ -56,20 +59,32 @@ def capture_worker(
     errors: queue.Queue,
     stop: threading.Event,
     port_holder: list,
+    toggle_gate: threading.Event,
 ) -> None:
+    # The capture worker owns the port; the UI thread only requests a gate
+    # toggle via this Event (thread-safe: set()/is_set()/clear() do not need
+    # an extra lock). It is applied here, before the next 'C', so 'G' and
+    # 'C' are never interleaved on the wire from two threads.
     try:
         with serial.Serial(device, 115200, timeout=0.05, write_timeout=timeout) as port:
             port_holder.append(port)
             time.sleep(0.1)
             while not stop.is_set():
                 try:
-                    source_frame, width, height, payload = request_frame(port, timeout)
+                    if toggle_gate.is_set():
+                        toggle_gate.clear()
+                        port.write(b"G")
+                        port.flush()
+                    result = request_frame(port, timeout)
                     frame = VideoFrame(
-                        source_frame=source_frame,
-                        width=width,
-                        height=height,
-                        rgb888=bytes(rgb565_to_rgb888(payload)),
+                        source_frame=result.source_frame,
+                        width=result.width,
+                        height=result.height,
+                        rgb888=bytes(rgb565_to_rgb888(result.payload)),
                         received_at=time.monotonic(),
+                        brightness=result.brightness,
+                        gated=result.gated,
+                        mask=result.mask,
                     )
                     replace_queued_item(frames, frame)
                 except (TimeoutError, ValueError) as exc:
@@ -80,6 +95,24 @@ def capture_worker(
             replace_queued_item(errors, f"USB capture stopped: {exc}")
     finally:
         port_holder.clear()
+
+
+def apply_mask_overlay(rgb888: bytearray, mask: bytes) -> bytearray:
+    """Tints every pixel whose mask entry is 0 (invalid) magenta, in place."""
+    for index, valid in enumerate(mask):
+        if not valid:
+            offset = index * 3
+            rgb888[offset] = 255
+            rgb888[offset + 1] = 0
+            rgb888[offset + 2] = 255
+    return rgb888
+
+
+def build_surface(pygame, frame: VideoFrame, overlay_on: bool):
+    rgb888 = frame.rgb888
+    if overlay_on and frame.mask is not None:
+        rgb888 = apply_mask_overlay(bytearray(rgb888), frame.mask)
+    return pygame.image.frombuffer(rgb888, (frame.width, frame.height), "RGB")
 
 
 def fit_rect(pygame, container, aspect_ratio: float):
@@ -132,10 +165,11 @@ def main() -> int:
     frames: queue.Queue[VideoFrame] = queue.Queue(maxsize=1)
     errors: queue.Queue[str] = queue.Queue(maxsize=1)
     stop = threading.Event()
+    toggle_gate = threading.Event()
     port_holder: list = []
     worker = threading.Thread(
         target=capture_worker,
-        args=(serial, device, args.timeout, frames, errors, stop, port_holder),
+        args=(serial, device, args.timeout, frames, errors, stop, port_holder, toggle_gate),
         name="snes-usb-capture",
         daemon=True,
     )
@@ -146,6 +180,7 @@ def main() -> int:
     frame_times: deque[float] = deque(maxlen=30)
     four_by_three = not args.square_pixels
     fullscreen = False
+    overlay_on = False
     status = f"Opening {device}"
     running = True
 
@@ -164,15 +199,17 @@ def main() -> int:
                         flags = pygame.FULLSCREEN if fullscreen else pygame.RESIZABLE
                         size = (0, 0) if fullscreen else windowed_size
                         screen = pygame.display.set_mode(size, flags)
+                    elif event.key == pygame.K_v:
+                        overlay_on = not overlay_on
+                        if current_frame is not None:
+                            current_surface = build_surface(pygame, current_frame, overlay_on)
+                    elif event.key == pygame.K_g:
+                        toggle_gate.set()
 
             try:
                 while True:
                     current_frame = frames.get_nowait()
-                    current_surface = pygame.image.frombuffer(
-                        current_frame.rgb888,
-                        (current_frame.width, current_frame.height),
-                        "RGB",
-                    )
+                    current_surface = build_surface(pygame, current_frame, overlay_on)
                     frame_times.append(current_frame.received_at)
                     status = ""
             except queue.Empty:
@@ -195,6 +232,13 @@ def main() -> int:
                     f"Pico RetroDigital SNES USB | {fps:.1f} fps | "
                     f"frame {current_frame.source_frame} | {aspect_name}"
                 )
+                if current_frame.brightness is not None:
+                    title += f" | bright {current_frame.brightness}"
+                if current_frame.gated is not None:
+                    title += f" | gate {'on' if current_frame.gated else 'off'}"
+                if overlay_on and current_frame.mask is not None:
+                    valid_percent = sum(current_frame.mask) / len(current_frame.mask) * 100.0
+                    title += f" | valid {valid_percent:.1f}%"
             else:
                 title = f"Pico RetroDigital SNES USB | {status}"
             if status and current_frame is not None:

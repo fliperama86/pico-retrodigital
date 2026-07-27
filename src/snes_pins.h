@@ -25,8 +25,23 @@
 
 #define PIN_SNES_HBLANK 24
 #define PIN_SNES_VBLANK 25
-#define PIN_SNES_PIXEL_VALID 26 // Not used until separately hardware-validated.
+// Hardware-implemented on the QSB: AND of PPU1 /OVER and PPU2 /TRANSPARENT.
+// High during valid picture output; low during sync/burst periods, on
+// backdrop-transparent pixels, and on Mode 7 out-of-map pixels. Toggles at
+// pixel rate, so CPU sampling can only prove liveness, not timing. Being
+// validated (Stage 2 test plan).
+#define PIN_SNES_PIXEL_VALID 26
 #define PIN_SNES_PCLK 28
+
+// QSB $2100 brightness latch: a 74HC175 holds the last nibble written to
+// SNES register $2100 (0 = black, 15 = full brightness), buffered onto the
+// FPC by a 74LVC245. Changes mostly during vblank (frame fades) and is
+// stable between writes. CMOD_0 is the LSB.
+#define PIN_SNES_CMOD0 29
+#define PIN_SNES_CMOD1 30
+#define PIN_SNES_CMOD2 31
+#define PIN_SNES_CMOD3 32
+
 #define PIN_SNES_BASE 33
 
 #define PIN_SNES_R0 33

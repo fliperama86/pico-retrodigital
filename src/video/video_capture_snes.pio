@@ -1,6 +1,21 @@
 ; SNES Hard Sync Capture (with horizontal offset)
 ; Optimized for RP2350.
 ;
+; Three programs across two PIO blocks capture RGB pixels, per-line
+; brightness, and a per-pixel PIXEL_VALID mask in lockstep from the same
+; VBLANK falling edge (see the CPU-side arming race fix in main.c, which
+; waits for a fresh VBLANK-low before resetting and arming all three SMs so
+; the whole arm sequence lands with a full frame of margin before the next
+; edge).
+;
+; snes_hard_sync (pio1, GPIOBASE=16, IN_BASE=GP33): RGB555 capture, 19
+;   instructions, triggered by irq 4.
+; snes_cmod (pio1, GPIOBASE=16, IN_BASE=GP29): brightness nibble capture,
+;   7 instructions, triggered by irq 5. pio1 total: 26 of 32 instructions.
+; snes_pixel_valid_mask (pio2, GPIOBASE=0, IN_BASE=GP26): PIXEL_VALID mask
+;   capture, 19 instructions, triggered by this block's own irq 4 (PIO irq
+;   flags are per-block, so this does not collide with pio1's irq 4).
+;
 ; GPIOBASE = 16, IN_BASE = GP33, RGB capture is GP33-GP47.
 ; WAIT GPIO operands use absolute GPIO numbers. The Pico SDK relocates them
 ; for GPIOBASE=16 when loading the program.
@@ -8,10 +23,10 @@
 ;   gpio 25 = VBLANK
 ;   gpio 28 = PCLK
 ;
-; Frame-level synchronization (the VBLANK wait) runs entirely on this state
-; machine, so the capture start line is cycle-exact and independent of
-; CPU/USB timing: the CPU may arm the trigger (irq 4) at any point in the
-; frame, once DMA is configured, and everything from there to the first
+; Frame-level synchronization (the VBLANK wait) runs entirely on these state
+; machines, so the capture start line is cycle-exact and independent of
+; CPU/USB timing: the CPU may arm the trigger (irq 4 or 5) at any point in
+; the frame, once DMA is configured, and everything from there to the first
 ; captured pixel is timed by the PIO clock.
 
 .program snes_hard_sync
@@ -50,6 +65,62 @@ pixel_loop:
     nop
     in pins, 15
     jmp x-- pixel_loop
+
+    jmp line_loop
+.wrap
+
+; Brightness (CMOD) capture: one nibble per line, sampled at the HBLANK
+; falling edge. HDMA writes SNES register $2100 during HBLANK, so the QSB
+; latch already holds line N's value right when line N starts; no back
+; porch skip is needed since this does not sample pixels. IN_BASE = GP29
+; (CMOD_0..CMOD_3), shift left, autopush at 4, so each pushed word holds
+; the nibble in bits [3:0].
+.program snes_cmod
+
+.wrap_target
+    wait 1 irq 5
+    wait 1 gpio 25
+    wait 0 gpio 25
+loop:
+    wait 1 gpio 24
+    wait 0 gpio 24
+    in pins, 4
+    jmp loop
+.wrap
+
+; PIXEL_VALID mask capture: one bit per pixel, mirroring snes_hard_sync's
+; pixel cadence exactly so mask bit k aligns with captured pixel k. Runs on
+; pio2 (GPIOBASE=0; HBLANK/VBLANK/PCLK/PIXEL_VALID are all below 32, so no
+; relocation is needed there). IN_BASE = GP26 (PIXEL_VALID), shift right,
+; autopush at 32, so within each pushed word, pixel j is bit j (LSB-first).
+.program snes_pixel_valid_mask
+
+    ; One-time init: C code pushes (CAPTURE_WIDTH - 1)
+    pull block
+    mov y, osr
+
+.wrap_target
+    wait 1 irq 4
+    wait 1 gpio 25
+    wait 0 gpio 25
+
+line_loop:
+    wait 1 gpio 24
+    wait 0 gpio 24
+    set x, 19
+skip:
+    wait 0 gpio 28
+    wait 1 gpio 28
+    jmp x-- skip
+
+    mov x, y
+px:
+    wait 0 gpio 28
+    wait 1 gpio 28
+    nop
+    nop
+    in pins, 1
+    jmp x-- px
 
     jmp line_loop
 .wrap
