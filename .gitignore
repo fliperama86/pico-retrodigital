@@ -106,3 +106,4 @@ gha-creds-*.json
 **/gemini-*.yml
 **/gemini-*.toml
 production/
+.codex/
