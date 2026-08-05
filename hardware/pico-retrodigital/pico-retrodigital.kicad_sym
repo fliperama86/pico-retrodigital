@@ -689,7 +689,7 @@
 				)
 			)
 		)
-		(property "Value" "2-1734839-0"
+		(property "Value" "5034802000"
 			(at 7.62 29.21 0)
 			(effects
 				(font
@@ -697,7 +697,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_FFC-FPC:TE_2-1734839-0_1x20-1MP_P0.5mm_Horizontal"
+		(property "Footprint" "pico-retrodigital:FPC-SMD_5034802000"
 			(at 0 0 0)
 			(effects
 				(font
@@ -706,7 +706,7 @@
 			)
 			(hide yes)
 		)
-		(property "Datasheet" "https://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Customer+Drawing%7F1734839%7FC%7Fpdf%7FEnglish%7FENG_CD_1734839_C_C_1734839.pdf%7F4-1734839-0"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C234192.pdf"
 			(at 0 0 0)
 			(effects
 				(font
