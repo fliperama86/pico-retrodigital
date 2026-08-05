@@ -8,3 +8,16 @@
 	(condition "A.Type == 'Via' && (A.NetName == '+1V1' || A.NetName == 'CTL_0' || A.NetName == 'CTL_1' || A.NetName == 'CTL_2')")
 	(constraint via_diameter (min 0.45mm))
 	(constraint hole_size (min 0.2mm)))
+
+# J2 (HDMI receptacle) and J3 (FFC) are mutually exclusive assembly options and
+# intentionally share this location. Their courtyard and silkscreen collisions
+# are expected; mark them as exclusions so real violations stay visible.
+(rule "J2/J3 are mutually exclusive assembly options and intentionally share this location (courtyard)"
+	(severity exclusion)
+	(condition "(A.Reference == 'J2' && B.Reference == 'J3') || (A.Reference == 'J3' && B.Reference == 'J2')")
+	(constraint courtyard_clearance (min 0mm)))
+
+(rule "J2/J3 are mutually exclusive assembly options and intentionally share this location (silkscreen)"
+	(severity exclusion)
+	(condition "((A.memberOfFootprint('J2') && B.memberOfFootprint('J3')) || (A.memberOfFootprint('J3') && B.memberOfFootprint('J2'))) && !(A.Layer == '*.Courtyard' || B.Layer == '*.Courtyard' || A.Layer == '*.Fab' || B.Layer == '*.Fab')")
+	(constraint silk_clearance (min 0mm)))

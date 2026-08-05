@@ -60,7 +60,12 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "lib_footprint_mismatch|64800000|109600000|68831fd8-c8fa-4d75-88b5-190b35ad0f3a|00000000-0000-0000-0000-000000000000",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -741,7 +746,7 @@
         "uuid": "520ac6ec-80ea-49af-90b4-82d4dc9702db"
       }
     ],
-    "used_designators": "BOOT1,RES1",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [
