@@ -8751,10 +8751,6 @@
 		(uuid "fc192786-2813-4243-bde2-92fe55e0cfdb")
 	)
 	(no_connect
-		(at 215.9 119.38)
-		(uuid "48d11bc7-01a1-4862-981e-f91670553966")
-	)
-	(no_connect
 		(at 215.9 132.08)
 		(uuid "121f286c-5793-4fe2-aac2-de48c66f9416")
 	)
@@ -8785,6 +8781,10 @@
 	(no_connect
 		(at 266.7 144.78)
 		(uuid "55919a5a-bafd-4ada-8c7e-632ce6919f9d")
+	)
+	(no_connect
+		(at 215.9 119.38)
+		(uuid "a52090c7-daeb-4b5e-b517-367d42944dcf")
 	)
 	(no_connect
 		(at 215.9 157.48)

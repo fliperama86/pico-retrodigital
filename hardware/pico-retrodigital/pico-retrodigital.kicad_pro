@@ -750,7 +750,7 @@
         "uuid": "520ac6ec-80ea-49af-90b4-82d4dc9702db"
       }
     ],
-    "used_designators": "SW3-4,R21-22,#PWR49,#PWR52",
+    "used_designators": "",
     "variants": [
       {
         "name": "FFC"
