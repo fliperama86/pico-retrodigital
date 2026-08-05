@@ -8482,6 +8482,16 @@
 		)
 		(uuid "a492b286-acf4-445b-9602-421783771511")
 	)
+	(text "SEL"
+		(exclude_from_sim no)
+		(at 193.04 118.15 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "b102dd3f-5405-4b79-ae3d-9e15499520d9")
+	)
 	(text "ASSEMBLY OPTION: FIT J2 (HDMI) OR J3 (FFC), NEVER BOTH\nShared contact rows reverse the connector numbering: J3.19 = J2.1 ... J3.1 = J2.19; J3.20 = GND"
 		(exclude_from_sim no)
 		(at 401.32 229.87 0)
@@ -8494,15 +8504,15 @@
 		)
 		(uuid "d6a086a9-1b5a-40e0-aebe-f923077c0d92")
 	)
-	(text "BOOT"
+	(text "MENU"
 		(exclude_from_sim no)
-		(at 276.86 124.5 0)
+		(at 193.04 107.99 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 		)
-		(uuid "e235386c-b880-4b21-9344-08f845e98c57")
+		(uuid "d8fc3bb8-04ef-48f3-b250-cd3730a453a4")
 	)
 	(text "RES"
 		(exclude_from_sim no)
@@ -8513,6 +8523,16 @@
 			)
 		)
 		(uuid "dc94faea-dde0-4f9b-87f7-f7ae72760037")
+	)
+	(text "BOOT"
+		(exclude_from_sim no)
+		(at 276.86 124.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "e235386c-b880-4b21-9344-08f845e98c57")
 	)
 	(junction
 		(at 67.31 187.96)
@@ -8731,6 +8751,10 @@
 		(uuid "fc192786-2813-4243-bde2-92fe55e0cfdb")
 	)
 	(no_connect
+		(at 215.9 119.38)
+		(uuid "48d11bc7-01a1-4862-981e-f91670553966")
+	)
+	(no_connect
 		(at 215.9 132.08)
 		(uuid "121f286c-5793-4fe2-aac2-de48c66f9416")
 	)
@@ -8763,10 +8787,6 @@
 		(uuid "55919a5a-bafd-4ada-8c7e-632ce6919f9d")
 	)
 	(no_connect
-		(at 215.9 114.3)
-		(uuid "6230024d-2c30-4425-8e6f-5308dcb487d0")
-	)
-	(no_connect
 		(at 215.9 157.48)
 		(uuid "a6e6a601-e5a2-4874-ad0f-c8382ebf2a3d")
 	)
@@ -8797,14 +8817,6 @@
 	(no_connect
 		(at 266.7 147.32)
 		(uuid "be5b5ba3-b030-46f2-85ae-8a6afa8459f2")
-	)
-	(no_connect
-		(at 215.9 119.38)
-		(uuid "d0ada5d1-55dc-47d6-b77b-11f5ee2e1839")
-	)
-	(no_connect
-		(at 215.9 116.84)
-		(uuid "d84d7d94-c665-42ea-8405-0ecbfaba9157")
 	)
 	(no_connect
 		(at 215.9 121.92)
@@ -8859,6 +8871,16 @@
 			(type default)
 		)
 		(uuid "0794ed99-36ea-4fc8-9948-d683b86d1515")
+	)
+	(wire
+		(pts
+			(xy 215.9 116.84) (xy 203.2 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0c70786e-90f3-43a2-b5f5-191f22b91d2f")
 	)
 	(wire
 		(pts
@@ -9132,6 +9154,16 @@
 	)
 	(wire
 		(pts
+			(xy 198.12 120.65) (xy 203.2 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2dfb2946-c562-4089-b252-53597f2a81f7")
+	)
+	(wire
+		(pts
 			(xy 167.64 234.95) (xy 167.64 233.68)
 		)
 		(stroke
@@ -9152,6 +9184,16 @@
 	)
 	(wire
 		(pts
+			(xy 203.2 114.3) (xy 203.2 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "340da544-7b15-40ef-b3b4-87cb3cfcc620")
+	)
+	(wire
+		(pts
 			(xy 336.55 116.84) (xy 347.98 116.84)
 		)
 		(stroke
@@ -9159,6 +9201,16 @@
 			(type default)
 		)
 		(uuid "34e4d95a-ce11-4a3f-91e3-9ee179bf57ca")
+	)
+	(wire
+		(pts
+			(xy 215.9 114.3) (xy 203.2 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3575af17-2f25-417f-b18e-c648bfbced5e")
 	)
 	(wire
 		(pts
@@ -9702,6 +9754,16 @@
 	)
 	(wire
 		(pts
+			(xy 198.12 110.49) (xy 203.2 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a12e2725-72a9-4724-9f32-950cd537bf51")
+	)
+	(wire
+		(pts
 			(xy 266.7 85.09) (xy 280.67 85.09)
 		)
 		(stroke
@@ -9979,6 +10041,16 @@
 			(type default)
 		)
 		(uuid "d83abedb-7bff-4545-af42-b9b456bbc89c")
+	)
+	(wire
+		(pts
+			(xy 203.2 116.84) (xy 203.2 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "da03b484-1a35-4a3f-aac0-7b707881fce7")
 	)
 	(wire
 		(pts
@@ -15138,6 +15210,82 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 180.34 120.65 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "0e0fc126-34c0-4a6a-8ba2-e8cbc3d840cd")
+		(property "Reference" "#PWR052"
+			(at 173.99 120.65 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 175.9458 120.777 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 180.34 120.65 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 180.34 120.65 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 180.34 120.65 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "6f3bde06-6a3f-4a5c-89f7-e773b49413ae")
+		)
+		(instances
+			(project "pico-retrodigital"
+				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
+					(reference "#PWR052")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_name "+5V_1")
 		(lib_id "power:+5V")
 		(at 50.8 240.03 90)
@@ -16401,6 +16549,97 @@
 			(project "pico-retrodigital"
 				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
 					(reference "#PWR051")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 193.04 120.65 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "339f1cfd-a152-421e-8d16-0f2d0a2c073b")
+		(property "Reference" "SW4"
+			(at 195.072 116.078 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "K2-1808SN-A4SW-01"
+			(at 202.438 122.936 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_Vertical_Wuerth_434133025816"
+			(at 193.04 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 193.04 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 193.04 120.65 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C92589"
+			(at 193.04 120.65 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "43577f4b-78ed-4b8e-91e0-d893eb1da390")
+		)
+		(pin "2"
+			(uuid "4f3ecd4f-fac6-4464-b0ff-7ec0c77381d2")
+		)
+		(instances
+			(project "pico-retrodigital"
+				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
+					(reference "SW4")
 					(unit 1)
 				)
 			)
@@ -19655,6 +19894,97 @@
 			(project "pico-retrodigital"
 				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
 					(reference "R15")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 193.04 110.49 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "7d016e99-faa0-43f6-a8ce-3eb9ec58a319")
+		(property "Reference" "SW3"
+			(at 195.072 105.918 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "K2-1808SN-A4SW-01"
+			(at 202.438 112.776 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_Vertical_Wuerth_434133025816"
+			(at 193.04 105.41 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 193.04 105.41 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 193.04 110.49 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C92589"
+			(at 193.04 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7507d71e-9ef4-4c6f-a3d7-92c7510bee6f")
+		)
+		(pin "2"
+			(uuid "3dd3b5a1-6bc6-4609-b17d-acb1bfbde2c1")
+		)
+		(instances
+			(project "pico-retrodigital"
+				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
+					(reference "SW3")
 					(unit 1)
 				)
 			)
@@ -23704,6 +24034,17 @@
 				)
 			)
 		)
+		(property "FT Position Offset" "0,1.42"
+			(at 82.55 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "A1"
 			(uuid "465319bb-ad05-42b9-ac88-9670783b748a")
 		)
@@ -24490,6 +24831,82 @@
 			(project "pico-retrodigital"
 				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
 					(reference "C17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 180.34 110.49 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "d9318011-6dc6-4426-9bde-600c21b43b24")
+		(property "Reference" "#PWR049"
+			(at 173.99 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 175.9458 110.617 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 180.34 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 180.34 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 180.34 110.49 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "94acddcf-4524-4d00-9a5e-6f852cf212d5")
+		)
+		(instances
+			(project "pico-retrodigital"
+				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
+					(reference "#PWR049")
 					(unit 1)
 				)
 			)
@@ -25752,6 +26169,184 @@
 			(project "pico-retrodigital"
 				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
 					(reference "#PWR050")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 184.15 120.65 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f411b237-fc31-467d-be93-b3c14511795a")
+		(property "Reference" "R22"
+			(at 183.896 120.904 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 184.404 118.618 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 184.15 122.428 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 184.15 120.65 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 184.15 120.65 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C11702"
+			(at 184.15 120.65 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "bde15e61-441c-4b35-a667-5f405659a58c")
+		)
+		(pin "2"
+			(uuid "2f70e17f-2350-43d3-b5ce-d7076333046d")
+		)
+		(instances
+			(project "pico-retrodigital"
+				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
+					(reference "R22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 184.15 110.49 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "fa10bda9-a176-4424-8803-9ca7a136e113")
+		(property "Reference" "R21"
+			(at 183.896 110.744 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 184.404 108.458 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 184.15 112.268 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 184.15 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 184.15 110.49 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C11702"
+			(at 184.15 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "bfc51eff-d685-45da-8a02-39443ccfe5cf")
+		)
+		(pin "2"
+			(uuid "73fca32c-54b0-4226-bc54-9a90af6afbc1")
+		)
+		(instances
+			(project "pico-retrodigital"
+				(path "/520ac6ec-80ea-49af-90b4-82d4dc9702db"
+					(reference "R21")
 					(unit 1)
 				)
 			)
